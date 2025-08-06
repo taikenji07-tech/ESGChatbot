@@ -1,4 +1,4 @@
-
+import { Analytics } from "@vercel/analytics/next"
 import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './Header';
 import { BackgroundEffects } from './BackgroundEffects';
@@ -519,5 +519,5 @@ const App: React.FC = () => {
         </>
     );
 };
-
+<Analytics />
 export default App;
