@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ESG Student Guide Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Theme Variables */
+        :root {
+            --bg-primary: linear-gradient(-45deg, #dbeafe, #bfdbfe, #93c5fd, #60a5fa);
+            --bg-secondary: rgba(255,255,255,0.95);
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #10b981;
+            --header-bg: rgba(30, 64, 175, 0.9);
+            --progress-bg: rgba(255,255,255,0.2);
+            --progress-fill: #10b981;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(-45deg, #1e293b, #334155, #475569, #64748b);
+            --bg-secondary: rgba(30, 41, 59, 0.95);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent-primary: #60a5fa;
+            --accent-secondary: #34d399;
+            --header-bg: rgba(15, 23, 42, 0.9);
+            --progress-bg: rgba(30, 41, 59, 0.8);
+            --progress-fill: #34d399;
+        }
+
+        /* Webkit Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 10px; }
+        
+        /* Base animations */
+        .typing-dot { animation: typing 1.4s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-8px); opacity: 1; } }
+        
+        .animate-slide-in-up { animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        .animate-fade-in-up { animation: fadeInUp 0.6s 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Animated background */
+        .animated-bg {
+            background: var(--bg-primary);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            transition: background 0.5s ease;
+        }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        /* UI Elements Styling */
+        .chat-bubble { backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease; }
+        .bot-bubble { background: var(--bg-secondary); box-shadow: 0 8px 32px rgba(0,0,0,0.1); color: var(--text-primary); }
+        .user-bubble { background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); box-shadow: 0 8px 32px rgba(30,64,175,0.3); color: white; }
+        .button-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; filter: brightness(1); }
+        .button-hover:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.15); filter: brightness(1.1); }
+
+        /* Header & Progress Bar */
+        .progress-container { background: var(--progress-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .progress-bar { background: linear-gradient(90deg, var(--progress-fill), var(--accent-secondary)); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .header-bg { background: var(--header-bg); backdrop-filter: blur(20px); transition: background 0.5s ease; }
+        .score-display { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px); transition: transform 0.2s ease; }
+        .streak-counter { background: linear-gradient(135deg, #ef4444, #dc2626); animation: streakPulse 1.5s ease-in-out infinite; }
+        @keyframes streakPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        
+        /* Achievement Badge */
+        .achievement-badge-wrapper {
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .achievement-badge {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+        }
+
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.1",
+    "react-dom/client": "https://esm.sh/react-dom@^19.1.1/client",
+    "react/jsx-runtime": "https://esm.sh/react@^19.1.1/jsx-runtime",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
+    "path": "https://esm.sh/path@^0.12.7",
+    "vite": "https://esm.sh/vite@^7.0.6",
+    "url": "https://esm.sh/url@^0.11.4",
+    "react/": "https://esm.sh/react@^19.1.1/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.12.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="animated-bg min-h-screen flex flex-col relative overflow-hidden" data-theme="light">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
