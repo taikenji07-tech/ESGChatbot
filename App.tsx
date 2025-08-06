@@ -1,4 +1,4 @@
-import { Analytics } from "@vercel/analytics/react";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './Header';
 import { BackgroundEffects } from './BackgroundEffects';
@@ -470,7 +470,6 @@ const App: React.FC = () => {
 
     return (
         <>
-            <Analytics />
             <BackgroundEffects />
             <div className="relative z-10 flex flex-col h-screen">
                 <Header 
